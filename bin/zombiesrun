@@ -5,6 +5,10 @@ use warnings;
 use autodie;
 use WebService::ZombiesRun;
 
+# ABSTRACT: Basic cmdline tool for showing Zombies, Run! stats
+# PODNAME: zombiesrun
+# VERSION
+
 my ($player) = @ARGV;
 
 if (not $player) {
