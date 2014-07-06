@@ -29,7 +29,7 @@ sub _build_json  { return JSON::Any->new;      }
 
     my $zombies = WebService::ZombiesRun->new( player => 'pjf' );
 
-    my $runs = $zombies->runs;
+    my $runs = $zombies->runs_raw;
 
     foreach my $run (@$runs) {
        say "Ran $run->{distance} metres, burning $run->{energy} calories";
@@ -46,7 +46,7 @@ These structures may change.
 
 =method runs_raw
 
-    my $runs = $zombies->runs;
+    my $runs = $zombies->runs_raw;
 
     foreach my $run (@$runs) {
        say "Ran $run->{distance} metres, burning $run->{energy} calories";
@@ -75,7 +75,7 @@ sub total_runs { my ($self) = @_; return $self->meta_raw->{total_count}; }
 
 =method meta_raw
 
-    my $metadata  = $zombies->meta;
+    my $metadata  = $zombies->meta_raw;
 
 Returns the contents of the 'meta' data in the manfiest. At the time
 of writing, this is returned as a hash in the following form, which is
@@ -105,6 +105,21 @@ sub _fetch_user_path {
 
     return $self->json->decode( $self->agent->content );
 }
+
+=head1 SEE ALSO
+
+=over
+
+=item L<zombiesrun>
+
+Cmdline tool for retrieving information. Also a great proof of concept
+for using this module.
+
+=item L<Zombies, Run!|https://www.zombiesrungame.com/>
+
+The Zombies, Run! game.
+
+=back
 
 =for Pod::Coverage BUILD DEMOLISH
 

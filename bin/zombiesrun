@@ -9,6 +9,20 @@ use WebService::ZombiesRun;
 # PODNAME: zombiesrun
 # VERSION
 
+=head1 SYNOPSIS
+
+    $ zombiesrun pjf
+
+    pjf has 12 runs for 30405 metres and 2027 calories
+
+=head1 DESCRIPTION
+
+This cmdline tool provides basic information about the user specified
+as its argument. It's primarily intended as an example of using the
+L<WebService::ZombiesRun> module.
+
+=cut
+
 my ($player) = @ARGV;
 
 if (not $player) {
@@ -28,4 +42,4 @@ foreach my $run (@$runs) {
     $total_energy   += $run->{energy};
 }
 
-say "$player has $total_runs runs for $total_distance metres and $total_energy calories";
+say "$player has $total_runs runs for $total_distance metres and $total_energy calories.";
