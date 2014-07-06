@@ -8,7 +8,7 @@ use JSON::Any;
 use WWW::Mechanize;
 use Data::Dumper;
 
-our $DEBUG = 1;
+our $DEBUG = 0;
 
 use constant API_BASE => 'https://www.zombiesrungame.com/api/v3';
 
@@ -23,18 +23,81 @@ has json   => (is => 'lazy');
 sub _build_agent { return WWW::Mechanize->new; }
 sub _build_json  { return JSON::Any->new;      }
 
-sub runs {
+=head1 SYNOPSIS
+
+    use WebService::ZombiesRun;
+
+    my $zombies = WebService::ZombiesRun->new( player => 'pjf' );
+
+    my $runs = $zombies->runs;
+
+    foreach my $run (@$runs) {
+       say "Ran $run->{distance} metres, burning $run->{energy} calories";
+    }
+
+=head1 DESCRIPTION
+
+This module provides a thin interface that crawls the Zombies, Run!
+website for your running stats.
+
+As a thin interface, any method ending with C<_raw> is simply returning the
+JSON as used internally by the Zombies, Run! website.
+These structures may change.
+
+=method runs_raw
+
+    my $runs = $zombies->runs;
+
+    foreach my $run (@$runs) {
+       say "Ran $run->{distance} metres, burning $run->{energy} calories";
+    }
+
+Returns an array reference of run records. These are returned directly
+translated from the JSON provided by the underlying server.
+
+=cut
+
+sub runs_raw {
     my ($self) = @_;
 
-    say Dumper $self->_fetch_user_path("manifest");
+    return $self->_fetch_user_path("manifest")->{objects};
 }
+
+=method total_runs
+
+    my $runs = $zombies->total_runs;
+
+Returns the total runs completed by the player.
+
+=cut
+
+sub total_runs { my ($self) = @_; return $self->meta_raw->{total_count}; }
+
+=method meta_raw
+
+    my $metadata  = $zombies->meta;
+
+Returns the contents of the 'meta' data in the manfiest. At the time
+of writing, this is returned as a hash in the following form, which is
+directly interpreted from the JSON returned by the server:
+
+    {
+        'total_count' => 12,
+        'offset'      => 0,
+        'limit'       => 1000,
+        'previous'    => undef,
+        'next'        => undef
+    }
+
+=cut
+
+sub meta_raw { my ($self) = @_; return $self->_fetch_user_path("manifest")->{meta}; }
 
 sub _fetch_user_path {
     my ($self, $path) = @_;
 
     my $user = $self->player;
 
-    # Yes, this needs a slash before the ? for it to work
     my $call = join("/", API_BASE, "user/$user", $path, "?format=json");
 
     warn "Calling $call\n" if $DEBUG;

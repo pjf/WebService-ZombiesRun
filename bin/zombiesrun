@@ -1,0 +1,27 @@
+#!/usr/bin/perl -w
+use 5.010;
+use strict;
+use warnings;
+use autodie;
+use WebService::ZombiesRun;
+
+my ($player) = @ARGV;
+
+if (not $player) {
+    die "Usage: $0 player-name\n";
+}
+
+my $zombies = WebService::ZombiesRun->new(player => $player);
+
+my $total_runs = $zombies->total_runs;
+
+my $runs       = $zombies->runs_raw;
+
+my ($total_distance, $total_energy) = (0, 0);
+
+foreach my $run (@$runs) {
+    $total_distance += $run->{distance};
+    $total_energy   += $run->{energy};
+}
+
+say "$player has $total_runs runs for $total_distance metres and $total_energy calories";
